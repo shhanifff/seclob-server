@@ -53,3 +53,4 @@ export const Register = async (req, res) => {
 
   res.status(200).json({ message: "register api done", data: newUser });
 };
+

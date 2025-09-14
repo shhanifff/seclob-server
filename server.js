@@ -8,6 +8,7 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 
+
 mongoose
   .connect(
     `mongodb+srv://sukun555:3EmUbYdaOsOydMtY@cluster0.qigrcti.mongodb.net/seclob`
@@ -26,3 +27,4 @@ app.use("/api", router);
 app.listen(process.env.PORT, () => {
   console.log(`Server is running ${process.env.PORT}`);
 });
+

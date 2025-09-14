@@ -5,7 +5,13 @@ import { uploadImages } from "../untils/uploadToCloudinary.js";
 
 export const addProduct = async (req, res) => {
   console.log(req.body);
-  const { title, category, subCategory, description, variants } = req.body;
+  const {
+    title,
+    category,
+    subCategory,
+    description,
+    variants,
+  } = req.body;
 
   if (!req.files) {
     return res.status(400).json({ message: "Images are required" });
@@ -14,6 +20,8 @@ export const addProduct = async (req, res) => {
   if (!req.body) {
     return res.status(400).json({ message: "fields are required" });
   }
+
+  console.log("variants from frontend", variants);
 
   const imageUrls = await uploadImages(req.files);
 
@@ -33,12 +41,14 @@ export const addProduct = async (req, res) => {
     return res.status(404).json({ message: "Sub category doesn't exist" });
   }
 
+  const parsedVariants = JSON.parse(variants);
+
   const newProduct = await new Products({
     title,
     category: category,
     subCategory,
     description,
-    // variants:JSON.parse(variants),
+    variants: parsedVariants,
     images: imageUrls,
   });
 
@@ -46,12 +56,13 @@ export const addProduct = async (req, res) => {
 
   console.log("new product created", newProduct);
 
-  res.status(200).json({ message: "Add product api done", data: newProduct });
+  res
+    .status(200)
+    .json({ message: "product added successfully", data: newProduct });
 };
 
 export const editProduct = async (req, res) => {
   const { productId } = req.params;
-  //   console.log(productId);
 
   if (!mongoose.Types.ObjectId.isValid(productId)) {
     return res.status(400).json({ message: "Invalid productId" });
@@ -99,7 +110,6 @@ export const editProduct = async (req, res) => {
 };
 
 export const getAllProducts = async (req, res) => {
-  // Destructure query params with default empty string
   const {
     page = 1,
     limit = 10,
@@ -130,4 +140,22 @@ export const getAllProducts = async (req, res) => {
       totalPages: Math.ceil(total / limit),
     },
   });
+};
+
+export const productById = async (req, res) => {
+  const { productId } = req.params;
+
+  console.log(productId)
+
+  if (!mongoose.Types.ObjectId.isValid(productId)) {
+    return res.status(400).json({ message: "Invalid productId" });
+  }
+
+  const currentProduct = await Products.findById(productId);
+
+  if (!currentProduct) {
+    return res.status(404).json({ message: "Product Not Found" });
+  }
+
+  res.status(200).json({ message: "Prodcut founded", data: currentProduct });
 };

@@ -68,3 +68,18 @@ export const removeFromCart = async (req, res) => {
 
   res.status(200).json({ message: "Product removed from cart", cart });
 };
+
+export const cartById = async (req, res) => {
+  const { userId } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    return res.status(400).json({ message: "Invalid User ID" });
+  }
+
+  const userCart = await Cart.findOne({ userId }).populate("items.productId");
+  if (!userCart) {
+    return res.status(404).json({ message: "Cart Not Found" });
+  }
+
+  res.status(200).json({ message: "Cart founded", data: userCart });
+};

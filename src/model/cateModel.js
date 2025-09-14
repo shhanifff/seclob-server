@@ -5,14 +5,12 @@ const cateSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  subCategory: [
-    {
-      type: String,
-      require: true,
-      unique: true,
-    },
-  ],
+  subCategory: {
+    type: [String],
+    default: [],
+  },
 });
 
-const Category=mongoose.model('categories',cateSchema)
-export default Category
+const Category = mongoose.model("categories", cateSchema);
+
+export default Category;
